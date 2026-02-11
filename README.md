@@ -1,6 +1,7 @@
 # 🏛️ The Sentinel's Path (Nombre del Juego)
 > *Un puzle de lógica y perspectiva en primera persona desarrollado para "The Gauntlet: UE5 Survivor Jam".*
 
+ScreenShot del Día 1 de la JAM ♥♥
 ![Screen Día 1](ScreenDia1.png)
 
 ---
@@ -51,7 +52,7 @@ Si quieres inspeccionar el código o los Blueprints:
 
 ## 🏆 Historial de "The Gauntlet Jam"
 Este proyecto fue desarrollado en 7 días bajo estrictas reglas de eliminación diaria.
-*   **Día 1:** Locomoción y Repo ✅
+*   **Día 1:** Locomoción y Repo ✅ !(Docs\BITÁCORA TÉCNICA - DÍA 1.txt)
 *   **Día 2:** Mecánica Base (Rotación) ✅
 *   **Día 3:** Game Loop (Win/Lose) ✅
 *   **Día 4:** Level Design (Greybox) ✅
