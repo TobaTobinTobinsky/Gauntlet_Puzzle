@@ -1,7 +1,7 @@
 # 🏛️ The Sentinel's Path (Nombre del Juego)
 > *Un puzle de lógica y perspectiva en primera persona desarrollado para "The Gauntlet: UE5 Survivor Jam".*
 
-![Banner](https://via.placeholder.com/800x400.png?text=SCREENSHOT+DEL+JUEGO+AQUI)  
+![Banner](D:\Unreal Projects\TheGauntlet_01\Saved)
 *(Reemplaza este link con una captura real de tu juego cuando tengas una)*
 
 ---
