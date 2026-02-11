@@ -1,0 +1,134 @@
+🏛️ DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 1)
+Objetivo: Establecer una estructura de proyecto escalable y un entorno de pruebas (Sandbox) funcional para validar las mecánicas de movimiento e interacción.
+1. ÁRBOL DE DIRECTORIOS (Content Browser)
+Filosofía: Mantener todo nuestro trabajo dentro de una carpeta raíz (_Game) para diferenciarlo de plugins, Starter Content o assets comprados.
+Crea esta estructura exacta en tu Content Browser:
+📂 _Game (Carpeta Raíz - El guion bajo la mantiene arriba)
+📂 Blueprints
+📂 Core (Aquí irán: GM_Gauntlet, PC_PlayerController)
+📂 Characters (Aquí irá: BP_Hero)
+📂 Interactables (Aquí irá el Cubo/Cartel)
+
+
+📂 Maps
+(Aquí guardaremos el nivel de prueba)
+
+
+📂 UI
+(Aquí irá el Widget del cartel)
+
+
+📂 Input
+📂 Actions (IA_Move, IA_Interact)
+📂 Mappings (IMC_Default)
+
+
+📂 Art (Vacía por ahora, para el Día 5)
+📂 Materials
+📂 Meshes
+
+
+📂 Audio (Vacía por ahora, para el Día 6)
+2. SETUP DEL NIVEL DE PRUEBAS (Sandbox)
+Objetivo: Crear un espacio limpio donde el rendimiento sea máximo y no haya distracciones visuales.
+Instrucciones de Creación:
+Nuevo Nivel: Crea un nivel tipo "Basic" (File > New Level > Basic).
+Por qué: Ya trae la iluminación esencial (Directional Light + Sky Atmosphere) para que no se vea todo negro en el video entregable.
+
+
+Suelo:
+Borra el suelo pequeño que trae por defecto.
+Usa el Modo Landscape para crear un terreno plano simple (63x63 quads es suficiente).
+Razón: Es más fácil probar distancias en un terreno amplio que en un cubo pequeño.
+
+
+Player Start:
+Coloca un actor PlayerStart en el centro del mapa (Coordenadas 0,0,100).
+Esto asegura que el juego sepa dónde nace el jugador.
+
+
+Guardado:
+Guarda el mapa en _Game/Maps/ con el nombre L_Sandbox_01.
+3. CONFIGURACIÓN DEL "CORE" (GameMode)
+Vital para cumplir la regla: "El personaje debe moverse".
+En _Game/Blueprints/Core, crea un GameMode Base llamado GM_Gauntlet.
+En los World Settings del mapa L_Sandbox_01, asigna este GM_Gauntlet como el GameMode Override.
+(Verificación): Asegúrate de que en "Default Pawn Class" esté seleccionado tu personaje (si usas el de tercera persona de la plantilla, selecciona BP_ThirdPersonCharacter).
+4. EL PERSONAJE
+El personaje podría ser el propio BP_FirstPersonCharacter pero por cuestiones de seguridad se optó por crear un hijo del mismo y colocarlo en el directorio Game\Blueprints\Characters\ y llamarlo BP_PuzzleHero
+5. EL OBJETO DE REFERENCIA (El "Dummy")
+Objetivo: Tener un objeto físico que justifique el movimiento del jugador hacia él.
+PASO 1: Creación del Componente Widget
+En _Game/Blueprints/Interactables, crea un Actor llamado BP_DummyInteract.
+Composición:
+Crear un Cubo simple: Con este cubo simulamos la estatua.
+Crea un Widget Component: Este será el mensaje a mostrar en la pantalla del jugador.
+Coloca este actor frente al Player Start (a unos 5 metros de distancia).
+PASO 2: Configuración del Componente Widget
+Con el componente Widget seleccionado en tu Actor, ve al panel de Details (derecha) y busca la sección User Interface.
+Tienes que cambiar estas 3 opciones SÍ o SÍ para que se vea bien:
+Space: Cámbialo de World a Screen.
+Por qué: Si lo dejamos en World, es un cartel 3D plano que se hace pequeño si te alejas. En Screen, siempre mira a la cámara y mantiene el tamaño legible (como las etiquetas de los nombres en los juegos RPG).
+Draw at Desired Size: Márcalo TRUE (✅).
+Por qué: Si no lo marcamos, Unreal intentará dibujar un canvas gigante. Al marcarlo, se ajusta automáticamente al tamaño de tu texto.
+Widget Class: Aquí se ve (por el momento) que dice "None".
+Problema: Tenemos el "marco" (el componente), pero no la "foto" (el diseño del cartel).
+Solución: Necesitamos crear un Widget Blueprint rápido para poner ahí.
+PASO 3: Crear el Diseño del Cartel (Rápido)
+Dejamos el Actor abierto un segundo y volvemos al Content Browser.
+En la carpeta _Game/UI, Clic derecho > User Interface > Widget Blueprint.
+En la ventana que sale, seleccionamos el botón "User Widget".
+Nombre: WBP_InfoLabel.
+Dentro del editor de UI:
+Busca un Text en la paleta (izquierda) y arrástralo al centro.
+En el texto escribe: [E] Interactuar.
+(Opcional rápido) Ponle un Outline (borde) negro de grosor 2 en los detalles para que se lea mejor sobre el fondo 3D.
+Compilar y Guardar.
+PASO 4: Conectar todo
+Volvemos al Actor (BP_DummyInteract).
+Seleccionamos otra vez el componente Widget.
+En Widget Class, ahora buscamos y podemos seleccionar el WBP_InfoLabel que acabamos de crear.
+PASO 5: Crear el Sensor (Sphere Collision)
+Necesitamos un volumen invisible que detecte al jugador.
+En la pestaña Viewport de BP_DummyInteract añade un componente nuevo: Sphere Collision.
+Ajuste de Tamaño: En el panel Details > Shape, aumenta el Sphere Radius a 100.0 (o hasta que veas que la línea amarilla es cómodamente más grande que el cubo).
+CONFIGURACIÓN CRÍTICA (Collision Presets):
+Busca la sección Collision.
+En Collision Presets, cambia lo que haya por Trigger.
+Por qué: Si lo dejamos en "BlockAll", el jugador chocará contra una pared invisible. "Trigger" permite atravesarla y solo avisa "Hey, alguien entró".
+PASO 6: Ocultar el Cartel por defecto
+El estado inicial debe ser "apagado".
+En el componente Widget seleccionamos el panel Details, buscamos la sección Rendering.
+Buscamos la opción “Visible”: Desmarca la casilla (❌).
+Ahora el cartel debería desaparecer del Viewport.
+PASO 7: Programar la Lógica (Event Graph)
+Ahora vamos a conectar los cables: "Si entras -> Muestra. Si sales -> Oculta."
+En la pestaña Event Graph seleccionamos el componente Sphere en la lista de la izquierda.
+En el panel Details (abajo del todo), pulsamos el botón + verde en:
+On Component Begin Overlap
+On Component End Overlap
+Ahora conectamos los nodos así:
+A) Para mostrar (Begin Overlap):
+Desde el pin Other Actor (del nodo rojo), arrastramos y buscamos Cast to BP_FirstPerson (Esto es para que una caja física que ruede por ahí no active el cartel, solo el jugador).
+Del pin de éxito del Cast (As Character...), conectamos a un nodo Set Visibility.
+Target del Set Visibility: Arrastramos el componente Widget al grafo y conectamos al Target.
+New Visibility: Marcamos la casilla (✅).
+B) Para ocultar (End Overlap):
+Este es el mismo procedimiento: Desde Other Actor -> Cast to Character.
+Del éxito -> Set Visibility.
+Target: componente Widget.
+New Visibility: Dejamos la casilla desmarcada (❌).
+🧪 PRUEBA FINAL
+Compilar y Guardar.
+Arrastramos el Actor al nivel.
+Damos Play.
+Ahora deberíamos poder alejarnos y acercarnos, y el cartel de [E] Interactuar al acercarnos al cubo debería aparecer y desaparecer.
+✅ CHECKLIST FINAL DEL DÍA 1 (Para el Juez)
+Antes de cerrar por hoy y grabar el video, verificamos esto:
+Estructura: ¿Tengo mi carpeta _Game limpia y ordenada?
+Repositorio: ¿He hecho Commit y Push de estas carpetas nuevas?
+Playtest: Al dar "Play":
+¿Nazco en el PlayerStart?
+¿Puedo caminar con WASD hacia el cubo?
+¿Veo el cartel de "E - Interactuar" sobre el cubo?
+¿El juego corre fluido?
