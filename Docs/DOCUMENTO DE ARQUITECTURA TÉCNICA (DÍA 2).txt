@@ -1,0 +1,74 @@
+📘 DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 2)
+Objetivo: Implementar un sistema de interacción básico donde el jugador pueda visualizar un puntero en pantalla y rotar objetos del entorno (estatuas) 45 grados al pulsar una tecla.
+📘 1. SISTEMA DE VISUALIZACIÓN (HUD)
+Para otorgar feedback visual de hacia dónde estamos mirando.
+1.1 Creación del Widget (WBP_Crosshair)
+En la carpeta _Game/UI, creamos un nuevo Widget Blueprint llamado WBP_Crosshair.
+Dentro del editor, añadimos un componente Image al Canvas Panel.
+Configuramos sus propiedades para centrarlo perfectamente:
+Anchors: Center (El recuadro central).
+Alignment: (0.5, 0.5).
+Position: (0.0, 0.0).
+Size: (4.0, 4.0) píxeles.
+Color: Blanco con Alpha 0.5 (semitransparente).
+1.2 Implementación en el Personaje (BP_PuzzleHero)
+Abrimos el Blueprint del personaje principal.
+En el evento BeginPlay, añadimos la lógica para mostrar la interfaz:
+Nodo Create Widget (Clase: WBP_Crosshair).
+Nodo Add to Viewport (ZOrder: 0).
+Al compilar y jugar, verificamos que aparece un punto blanco en el centro de la pantalla.
+📘 2. CONFIGURACIÓN DEL SISTEMA DE ENTRADA (INPUT ACTION)
+Diseñamos un esquema de control propio para garantizar que la interacción sea fluida y no existan conflictos de jerarquía entre el personaje y los objetos del escenario.
+2.1 Creación del Input Action (IA_Interact)
+Para que la tecla "E" pueda ser detectada por múltiples Blueprints a la vez (tanto por el personaje como por los cubos), configuramos el asset de la siguiente manera:
+En la carpeta _Game/Input/Actions, creamos el Input Action IA_Interact.
+Configuración de Consumo (Vital): En el panel de detalles, dentro de la sección Consumo de entrada, DESMARCAMOS la casilla "Consume Lower Priority Enhanced Input Mappings".
+Razón Técnica: Al desactivar esta opción, permitimos que la señal de la tecla "E" no se detenga en el primer objeto que la escuche, logrando que llegue hasta la lógica interna del cubo interactuable.
+2.2 Lógica de Interacción Simplificada (Overlap Event)
+Optimizamos el sistema eliminando cálculos de traza (Raycast) innecesarios en favor de eventos de colisión directa.
+En el Actor Interactuable (BP_DummyInteract):
+Usamos el componente Sphere Collision existente (el mismo que activa la UI).
+Habilitar Input (Enable Input):
+En el evento OnComponentBeginOverlap (cuando el jugador entra), obtenemos el Player Controller (Get Player Controller 0).
+Llamamos al nodo Enable Input conectando el Player Controller.
+Resultado: Ahora este actor específico puede escuchar las teclas del teclado.
+Deshabilitar Input (Disable Input):
+En el evento OnComponentEndOverlap (cuando sale), llamamos a Disable Input.
+Resultado: Dejamos de escuchar teclas para evitar activaciones accidentales a distancia.
+Ejecución (Event E):
+Simplemente llamamos al Evento de Tecla E (o nuestro Input Action IA_Interact) dentro del Blueprint de la estatua.
+Conectamos esto directo a la lógica de rotación (Timeline).
+📘 3. IMPLEMENTACIÓN DE LA ROTACIÓN DE 45°
+Objetivo: Lograr que el objeto gire exactamente 45 grados de forma suave en cada pulsación, garantizando que la animación se reinicie correctamente siempre.
+3.1 Configuración de Recepción de Input
+Para que el objeto reconozca la tecla "E" directamente, realizamos el ajuste de jerarquía:
+En los Class Defaults de BP_DummyInteract, localizamos la sección Input.
+Cambiamos Auto Receive Input a Player 0. Esto permite que el cubo escuche al jugador sin nodos extra.
+3.2 Lógica de Captura (Event Graph)
+El Disparador: Colocamos el evento IA_Interact.
+Registro de Inicio: Del pin Started, conectamos el nodo Set RotacionInicial (obteniendo el valor de GetActorRotation).
+Cálculo de Destino: Conectamos a Set RotacionObjetivo. Usamos un nodo Combine Rotators:
+Pin A: RotacionInicial.
+Pin B (Z/Yaw): Escribimos 45.0.
+3.3 Configuración del Timeline (Giro_45)
+Añadimos el nodo Add Timeline Giro_45.
+Dentro del Timeline:
+Length (Duración): 2.0 segundos.
+Track: Creamos un "Float Track" llamado Progreso.
+Curva: Ponemos un punto en (0.0, 0.0) y otro en (2.0, 1.0).
+Seleccionamos ambos puntos y aplicamos Auto para suavizar el movimiento.
+3.4 Ejecución y Reinicio de Animación (EL FIX)
+Para asegurar que la animación funcione en cada pulsación, conectamos los nodos de la siguiente manera:
+Activación Crítica: Conectamos la salida de nuestros "Set" de variables al pin PLAY FROM START del Timeline.
+Razón: Esto reinicia el cronómetro de la animación a cero en cada interacción, evitando que el objeto se "teletransporte" en el segundo giro.
+Actualización: Del pin Update, llamamos a SetActorRotation.
+Mezcla de Datos: En el pin de rotación usamos un Lerp (Rotator):
+A: RotacionInicial.
+B: RotacionObjetivo.
+Alpha: El pin Progreso del Timeline.
+Shortest Path: Marcamos la casilla. Esto es vital para que el motor no intente dar la vuelta larga (315°) al cruzar el límite de los 360 grados.
+✅ VERIFICACIÓN FINAL
+Colocamos una instancia de BP_DummyInteract en el nivel.
+Al presionar Play, nos acercamos, apuntamos con el puntero central y presionamos E.
+El objeto rota 45 grados a la derecha de forma suave y se detiene en la posición correcta.
+
