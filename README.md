@@ -8,6 +8,11 @@ ScreenShot del día 2 de la Jam ♥♥
 ![Screen Día 2-01](ScreenDia2-01.png)
 ![Screen Día 2-02](ScreenDia2-02.png)
 ![Screen Día 2-03](ScreenDia2-03.png)
+ScreenShot del día 3 de la Jam ♥♥
+![Screen Día 3-00](ScreenDia3-00.png)
+![Screen Día 3-01](ScreenDia3-01.png)
+![Screen Día 3-02](ScreenDia3-02.png)
+![Screen Día 3-03](ScreenDia3-03.png)
 
 
 ---
@@ -59,8 +64,8 @@ Si quieres inspeccionar el código o los Blueprints:
 ## 🏆 Historial de "The Gauntlet Jam"
 Este proyecto fue desarrollado en 7 días bajo estrictas reglas de eliminación diaria.
 *   **Día 1:** Locomoción y Repo ✅ | ver **Docs\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 1).txt**
-*   **Día 2:** Mecánica Base (Rotación) ✅ | ver **Docs\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 2)**
-*   **Día 3:** Game Loop (Win/Lose) ✅
+*   **Día 2:** Mecánica Base (Rotación) ✅ | ver **Docs\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 2).txt**
+*   **Día 3:** Game Loop (Win/Lose) ✅ | VER **dOCS\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 3).txt**
 *   **Día 4:** Level Design (Greybox) ✅
 *   **Día 5:** Arte y Atmósfera (Lumen/Nanite) ✅
 *   **Día 6:** UI y Audio ✅

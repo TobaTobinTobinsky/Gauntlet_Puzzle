@@ -1,0 +1,42 @@
+📘 DOCUMENTO DE ARQUITECTURA TÉCNICA (Día 3)
+Objetivo: Implementar la lógica del ciclo de juego (Game Loop). Configurar un actor "Portal" que reaccione al grito del personaje y valide el estado de las estatuas para permitir el progreso.
+1. LA ESTATUA RECEPTORA (BP_Estatua)
+El objeto no actúa por cuenta propia; espera la señal del héroe y verifica si tiene permiso físico para girar.
+1.1 Memoria Lógica
+Dentro de BP_Estatua, definimos variables para que el portal pueda consultarlas:
+Valor_Actual: (Entero). Guarda la posición lógica (0-7) calculada tras el giro.
+BlockingNumber: (Entero / Editable). Representa la cifra que esta estatua debe alcanzar para que el portal la dé por válida.
+PuedeRotar: (Booleano). Se activa/desactiva mediante la esfera de colisión para filtrar si la estatua debe o no escuchar al héroe.
+1.2 Escucha Selectiva
+Suscripción: En el BeginPlay, la estatua se conecta al Event Dispatcher PressE del héroe.
+Filtro: Cuando el héroe emite la señal, la estatua ejecuta el evento GirarEstatua, pero solo prosigue si la variable PuedeRotar es verdadera.
+2. EL CEREBRO DEL PORTAL (BP_Portal)
+Este actor es un observador silencioso que supervisa el salón.
+2.1 Configuración de Referencias
+Para que el portal pueda juzgar, necesita tener acceso directo a las estatuas. Creamos variables de referencia:
+Estatua_0, Estatua_1, Estatua_2, Estatua_3: (Tipo: BP_Estatua / Editables).
+Uso: En el editor de niveles, seleccionamos el portal y le asignamos qué estatua física corresponde a cada variable de su memoria.
+2.2 Escucha y Disparo (ActivarPortal)
+Al igual que las estatuas, el portal también es un receptor de la señal del héroe:
+Vinculación: En el BeginPlay, el portal localiza al héroe y se suscribe a su dispatcher PressE.
+Evento: Esto genera el evento personalizado ActivarPortal.
+Funcionamiento: Cada vez que el jugador pulsa la "E", el portal se despierta y ejecuta su función de control.
+3. LÓGICA DE VALIDACIÓN (ControlPass)
+Procedimiento de escrutinio manual que determina el éxito del jugador.
+Dentro de la función ControlPass, el portal realiza una comprobación en cadena de todas las estatuas vinculadas:
+Lectura Individual: El portal accede a la variable Valor_Actual de la Estatua_0 y la compara con su número objetivo.
+Validación en Cascada: Repite el proceso con la Estatua_1, Estatua_2, etc.
+Veredicto (Return Value):
+Si TODAS las comparaciones son correctas, la función devuelve un booleano Aprobado = True.
+Si una sola falla, devuelve False.
+4. CONDICIÓN DE VICTORIA (The Loop)
+Ejecución de la respuesta del portal ante el evento del héroe.
+Tras recibir la respuesta de ControlPass, el portal actúa en el Event Graph:
+Si es True: Ejecuta un Print String con el mensaje "¡PORTAL ABIERTO!" y activa el cambio visual (en este caso, moviendo o modificando el Plano que oficia de puerta).
+Si es False: Lanza un Print String de "SECUENCIA INCORRECTA" (opcional para debug), manteniendo al jugador dentro del ciclo de puzle.
+✅ RESUMEN DE FLUJO ACTUAL
+Acción: El Héroe pulsa E y emite la señal PressE.
+Reacción:
+La Estatua cercana escucha y gira.
+El Portal escucha y audita a todas las estatuas llamando a ControlPass.
+Resultado: Si la auditoría del Portal coincide con la clave, el camino se libera.
