@@ -13,6 +13,9 @@ ScreenShot del día 3 de la Jam ♥♥
 ![Screen Día 3-01](ScreenDia3-01.png)
 ![Screen Día 3-02](ScreenDia3-02.png)
 ![Screen Día 3-03](ScreenDia3-03.png)
+ScreenShot del día 4 de la Jam ♥♥
+![Screen Día 4-00](ScreenDia4-00.png)
+![Screen Día 4-01](ScreenDia4-01.png)
 
 
 ---
@@ -65,8 +68,8 @@ Si quieres inspeccionar el código o los Blueprints:
 Este proyecto fue desarrollado en 7 días bajo estrictas reglas de eliminación diaria.
 *   **Día 1:** Locomoción y Repo ✅ | ver **Docs\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 1).txt**
 *   **Día 2:** Mecánica Base (Rotación) ✅ | ver **Docs\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 2).txt**
-*   **Día 3:** Game Loop (Win/Lose) ✅ | VER **dOCS\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 3).txt**
-*   **Día 4:** Level Design (Greybox) ✅
+*   **Día 3:** Game Loop (Win/Lose) ✅ | VER **Docs\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 3).txt**
+*   **Día 4:** Level Design (Greybox) ✅ | VER **Docs\DOCUMENTO DE ARQUITECTURA TÉCNICA (DÍA 4).txt**
 *   **Día 5:** Arte y Atmósfera (Lumen/Nanite) ✅
 *   **Día 6:** UI y Audio ✅
 *   **Día 7:** Build Final y Optimización ✅

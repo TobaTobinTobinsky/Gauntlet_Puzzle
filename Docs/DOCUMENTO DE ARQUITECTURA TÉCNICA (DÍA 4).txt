@@ -1,0 +1,36 @@
+📘 DOCUMENTO DE ARQUITECTURA TÉCNICA - INFRAESTRUCTURA Y TRANSICIÓN (DÍA 4)
+Objetivo: Establecer un sistema de viaje entre dimensiones mediante Level Streaming, garantizando la persistencia de datos, la limpieza de memoria y una experiencia de usuario (UX) cinematográfica con pantallas de carga dinámicas.
+1. SINCRONIZACIÓN DE IDENTIDAD (El Héroe)
+Para que el mundo reconozca al jugador, establecemos una base de identidad inalterable.
+ADN del Personaje: En el Blueprint BP_PuzzleHero, asignamos la etiqueta (Tag) "Heroe" en sus Class Defaults. Esto permite que cualquier objeto del mundo lo identifique por contacto físico sin importar en qué nivel se encuentre.
+Modo de Juego (GM_Gauntlet): Configuramos el Default Pawn Class apuntando exclusivamente a nuestro héroe. Esto asegura que Unreal no genere personajes genéricos que rompan la lógica de interacción.
+2. EL CEREBRO DINÁMICO DEL PORTAL (BP_Portal)
+Implementamos una cerradura universal que procesa cualquier cantidad de estatuas de forma abstracta.
+Sub-Función EstructuraEstatua: Creamos una función de tipo Pura (Pure) que actúa como un "traductor". Recibe una estatua y descompone instantáneamente sus valores (ID_Estatua, BlockingNumber, Valor_Actual), entregándolos en una lista limpia de pines sin necesidad de cables cruzados.
+Función ControlPass:
+Utilizamos un For Each Loop para recorrer la variable Array Estatuas.
+Escrutinio: Comparamos si el Valor_Actual de cada estatua es igual al BlockingNumber que definió el diseñador.
+Seguridad: Si el bucle detecta que una sola estatua no coincide, el portal activa su colisión (Set Collision Enabled) para bloquear el paso y devuelve un resultado Falso.
+Éxito: Solo si todas las estatuas son correctas, el sistema dispara el evento FXPortal y devuelve Verdadero.
+3. SISTEMA DE PANTALLA DE CARGA (UX)
+Ocultamos la carga técnica del motor mediante una secuencia de distracción para el jugador.
+Velo de Transición (WBP_FadeInOut): Creamos un Widget con una imagen negra y dos animaciones: Anim_FadeIn (ir a negro) y Anim_FadeOut (volver a la luz). Funciona como una cortina que sube y baja entre cambios de nivel.
+Pantalla de Consejos (WBP_PantallaCarga):
+Diseñamos una interfaz que muestra una imagen de fondo importada en nuestra carpeta de texturas.
+Lógica de Consejos: Mediante un Binding y el nodo Random Array Item, el Widget elige automáticamente un consejo de una lista local cada vez que aparece en pantalla, manteniendo la frescura de la experiencia.
+4. PROTOCOLO DE VIAJE DISTRIBUIDO (El Salto)
+Dividimos la responsabilidad del viaje para evitar bugs de carga y asegurar que el personaje siempre nazca en suelo firme.
+Fase A: Salida (Responsabilidad del Portal)
+Cuando el jugador pisa la colisión del portal habilitado:
+Congelamos el movimiento del héroe (Disable Input).
+Bajamos el velo negro y, tras dos segundo de oscuridad, mostramos la Pantalla de Consejos.
+Damos la orden al motor de cargar el siguiente sub-nivel en segundo plano.
+Fase B: Llegada (Responsabilidad del Nivel Destino)
+Utilizamos el Level Blueprint de cada habitación para recibir al jugador:
+Limpieza: Al iniciar (BeginPlay), ejecutamos un Remove All Widgets para borrar los consejos y restos del nivel anterior.
+Descarga: Ordenamos al motor borrar de la memoria el nivel que acabamos de dejar.
+Ubicación: Usamos el nodo Set Actor Location and Rotation para colocar al personaje en el punto de entrada exacto de la nueva sala, mirando hacia el desafío.
+Apertura: Ejecutamos el Fade Out del velo negro y devolvemos el control al jugador (Enable Input).
+5. EL CICLO DE CIERRE (BP_PortalFinal)
+Consagración: El último portal del juego no carga niveles, sino que invoca el mapa L_Creditos_Menu.
+Finalización: En este mapa, el GM_MenuFinal elimina la existencia del personaje y activa el puntero del ratón junto con el widget WBP_PantallaFinal, permitiendo al usuario decidir si desea reintentar el guantelete o salir al escritorio.
